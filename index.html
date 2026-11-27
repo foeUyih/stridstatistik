@@ -63,9 +63,79 @@
       <button class="tab-btn" onclick="bytFlik('imperieinfo', this)">🏰 Imperieinfo</button>
     </div>
 
-    <!-- FÄRDIG UTSKRIFT -->
-    <div class="panel" style="margin-top: 10px;">
+    <!-- FÄRDIG UTSKRIFT (För statistikflikarna) -->
+    <div id="utskriftPanel" class="panel" style="margin-top: 10px;">
       <pre id="utskrift">Väntar på data...</pre>
+    </div>
+
+    <!-- IMPERIEINFO (Visas när man klickar på fliken Imperieinfo) -->
+    <div id="imperieinfoVy" style="display: none; margin-top: 10px;">
+      
+      <div class="panel">
+        <h2 class="info-rubrik">🏰 Välkommen till Excalibur</h2>
+        <p class="info-text">
+          Vi är ett aktivt, prestigelöst och sammansvetsat imperium på SE5 där laganda och hjälpsamhet alltid går först. 
+          Oavsett om du är en rutinerad krigare eller på väg uppåt i tidsåldrarna finns det plats för dig som vill bidra till laget.
+        </p>
+        <div class="info-grid">
+          <div class="info-kort">
+            <h4>👑 Ledning & Kontakt</h4>
+            <ul>
+              <li><strong>Grundare:</strong> Namn 1</li>
+              <li><strong>ISF-ansvarig:</strong> Namn 2</li>
+              <li><strong>Rekrytering & Trådar:</strong> Namn 3</li>
+            </ul>
+          </div>
+          <div class="info-kort">
+            <h4>🏛️ Önskvärda byggnader</h4>
+            <ul>
+              <li><strong>Arken</strong> (gärna nivå 80+ på sikt)</li>
+              <li><strong>Observatoriet</strong> (för imperiekassan)</li>
+              <li><strong>Hydra / Kärnan</strong> (bonus för kassa & KI)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="info-rubrik">⚔️ Riktlinjer & Aktivitet</h2>
+        <div class="info-grid">
+          <div class="info-kort">
+            <h4>🛡️ Imperieslagfälten (ISF)</h4>
+            <ul>
+              <li>Följ alltid markeringarna (<strong>mål</strong> och <strong>stopp</strong>) på kartan.</li>
+              <li>Stäng aldrig en sektor utan klartecken från ISF-ledningen.</li>
+              <li>Kör så mycket din utmattning tillåter – varje strid räknas!</li>
+            </ul>
+          </div>
+          <div class="info-kort">
+            <h4>🗿 Expedition (IE) & Kvantum (KI)</h4>
+            <ul>
+              <li><strong>IE:</strong> Minst nivå 1–2 (nivå 4–5 öppnas vid behov).</li>
+              <li><strong>KI:</strong> Gemensamma insatser för att låsa upp kistor.</li>
+              <li><strong>Frånvaro:</strong> Meddela i chatten vid semester eller paus.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="imp-header">
+          <h2 class="info-rubrik" style="margin:0;">📨 Snabbtext: Välkomstmeddelande</h2>
+          <button type="button" id="kopieraValkommenBtn" onclick="kopieraValkommen()">📋 Kopiera välkomsttext</button>
+        </div>
+        <p class="info-text" style="margin-top: 6px;">Klicka på knappen för att kopiera en färdig hälsning att skicka till nya medlemmar i spelet:</p>
+        <pre id="valkomstText">══ ⚔️ VÄLKOMMEN TILL EXCALIBUR! ⚔️ ══
+
+Kul att du är med oss! Här kommer en snabb checklista för att komma igång:
+1. Gå med i våra 1,9-trådar (säg till om du behöver hjälp med hur de funkar).
+2. Håll koll på markeringar (mål/stopp) i Imperieslagfälten (ISF).
+3. Säg hej i imperiechatten och hojta till om du behöver varor eller ritningar!
+
+Nu kör vi! 🛡️🔥
+────────────────────</pre>
+      </div>
+
     </div>
   </div>
 
