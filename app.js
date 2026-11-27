@@ -9,10 +9,21 @@ let maxDayAvailable = 1;
 
 async function init() {
   try {
-    const res = await fetch('data.csv');
-    if (!res.ok) throw new Error("Hittade inte data.csv");
+    const res = await fetch('data.csv?t=' + Date.now());
+    if (!res.ok) throw new Error("Hittade inte data.csv (HTTP " + res.status + ")");
     const text = await res.text();
     rawData = DataUtils.parseCSV(text);
+
+    if (!rawData.length) {
+      const preview = text.split(/\r?\n/).slice(0, 3).join("\n");
+      document.getElementById('output').textContent =
+        "⚠️ Filen data.csv laddades in, men 0 giltiga rader kunde tolkas.\n\n" +
+        "Kontrollera att kolumnerna stämmer:\nKolumn A = Dag (siffra)\nKolumn C = Spelare\nKolumn D = Imperium\nKolumn F = Points change\nKolumn J = Strider\n\n" +
+        "Första 3 raderna i din data.csv ser ut så här:\n" + preview;
+      document.getElementById('impList').textContent = "Inga giltiga rader hittades.";
+      return;
+    }
+
     setupControls();
     render();
   } catch (e) {
@@ -23,7 +34,6 @@ async function init() {
     document.getElementById('impList').textContent = "Ingen data laddad.";
   }
 }
-
 function loadPastedData() {
   const txt = document.getElementById('rawPaste').value;
   if (!txt.trim()) return;
