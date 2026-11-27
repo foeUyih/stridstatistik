@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sök i databasen</title>
-  <script src="https://cloudflare.com"></script>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; color: #222; }
     .controls { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
@@ -38,22 +37,58 @@
     let allData = [];
     let headers = [];
 
-    Papa.parse(CSV_URL, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: function(results) {
-        allData = results.data;
-        headers = results.meta.fields;
+    // Inbyggd CSV-tolkare som klarar citattecken och kommatecken
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], cell = '', inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i], next = text[i + 1];
+        if (char === '"') {
+          if (inQuotes && next === '"') { cell += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+        } else if (char === ',' && !inQuotes) {
+          row.push(cell.trim()); cell = '';
+        } else if ((char === '\n' || (char === '\r' && next === '\n')) && !inQuotes) {
+          if (char === '\r') i++;
+          row.push(cell.trim());
+          if (row.some(c => c !== '')) rows.push(row);
+          row = []; cell = '';
+        } else {
+          cell += char;
+        }
+      }
+      if (cell || row.length) {
+        row.push(cell.trim());
+        if (row.some(c => c !== '')) rows.push(row);
+      }
+      return rows;
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch(CSV_URL);
+        if (!response.ok) throw new Error('HTTP-fel: ' + response.status);
+        const text = await response.text();
+        
+        const parsed = parseCSV(text);
+        if (parsed.length < 2) throw new Error('Inga rader hittades i filen.');
+
+        headers = parsed[0];
+        allData = parsed.slice(1).map(cols => {
+          let obj = {};
+          headers.forEach((h, index) => obj[h] = cols[index] || '');
+          return obj;
+        });
+
         const input = document.getElementById('searchInput');
         input.placeholder = `Sök bland ${allData.length} rader...`;
         input.disabled = false;
         updateView(allData);
-      },
-      error: function() {
-        document.getElementById('status').textContent = 'Kunde inte hämta data. Kontrollera CSV-länken.';
+      } catch (err) {
+        document.getElementById('status').textContent = 'Fel vid hämtning: ' + err.message;
+        console.error(err);
       }
-    });
+    }
 
     document.getElementById('searchInput').addEventListener('input', function(e) {
       const terms = e.target.value.toLowerCase().trim().split(/\s+/);
@@ -84,6 +119,8 @@
       
       table.innerHTML = thead + tbody;
     }
+
+    loadData();
   </script>
 
 </body>
