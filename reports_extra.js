@@ -1,30 +1,3 @@
-function skapaInternRapport(info) {
-  const { periodData, periodDagar, rubrikPeriod, stjarnLagRaw } = info;
-  if (!stjarnLagRaw) return "Skriv in ditt imperium i rutan 'Stjärna (⭐) för lag' i kontrollpanelen.";
-
-  const lagData = periodData.filter(r => r.imperium.toLowerCase() === stjarnLagRaw.toLowerCase());
-  const lagTot = lagData.reduce((sum, r) => sum + r.strider, 0);
-  const karta = {};
-
-  lagData.forEach(rad => {
-    if (!karta[rad.spelare]) karta[rad.spelare] = { namn: rad.spelare, tot: 0, dagar: new Set() };
-    karta[rad.spelare].tot += rad.strider;
-    karta[rad.spelare].dagar.add(rad.dag);
-  });
-
-  const sorterade = Object.values(karta).sort((a, b) => b.tot - a.tot);
-  if (sorterade.length === 0) return `Hittade inga spelare för "${stjarnLagRaw}" under vald period.`;
-
-  let text = `══ 🛡️ INTERN TOPPLISTA: ${stjarnLagRaw.toUpperCase()} (${rubrikPeriod}) ══\n(Totalt • Snitt/dag • Andel av lagets strider)\n\n`;
-  text += sorterade.map((sp, idx) => {
-    const snitt = sp.tot / periodDagar;
-    const andel = lagTot === 0 ? "0,0%" : ((sp.tot / lagTot) * 100).toFixed(1).replace(".", ",") + "%";
-    return `${idx + 1}. ${sp.namn} • ⚔️ ${formateraTal(sp.tot)} (${formateraTal(snitt)}/dag • ${andel} • ${sp.dagar.size}/${periodDagar} dgr)`;
-  }).join("\n\n");
-
-  return text + `\n\n────────────────────\nTotalt ${sorterade.length} spelare i topp 200 • Summa: ${formateraTal(lagTot)} strider\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
-}
-
 function skapaDuellRapport(info) {
   const { periodData, franDag, tillDag, periodDagar, rubrikPeriod, valdaImp, stjarnLagRaw } = info;
   const lagEtt = valdaImp.at(0) || stjarnLagRaw || "Välj lag 1";
@@ -101,4 +74,8 @@ function skapaFormRapport(info) {
   }).join("\n\n");
 
   return text + `\n\n────────────────────\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
+}
+
+function skapaImperieInfoRapport() {
+  return `══ 🏰 IMPERIEINFO ══\n\n🚧 Under konstruktion...\n\nHär kommer snart fördjupad information och statistik för imperier.\n────────────────────`;
 }
