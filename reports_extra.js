@@ -60,25 +60,36 @@ function skapaDuellRapport(info) {
 }
 
 function skapaFormRapport(info) {
-  const { periodData, franDag, tillDag, arEnskild, stjarnLagRaw } = info;
-  if (!stjarnLagRaw) return "Skriv in ditt imperium i rutan 'Stjärna (⭐) för lag' i kontrollpanelen.";
+  const { periodData, franDag, tillDag, arEnskild, valdaImp, antalTopp, stjarnLag } = info;
   if (arEnskild) return "Välj minst 2 dagar (Från dag < Till dag) för att se formkurvan.";
 
-  const lagData = periodData.filter(r => r.imperium.toLowerCase() === stjarnLagRaw.toLowerCase());
-  const dagSp = lagData.filter(r => r.dag === tillDag);
+  // Filtrera på ikryssade imperier, eller ta hela servern om inget är valt
+  const filtreradData = valdaImp.length > 0
+    ? periodData.filter(r => valdaImp.includes(r.imperium))
+    : periodData;
+
+  const dagSp = filtreradData.filter(r => r.dag === tillDag);
 
   const formLista = dagSp.map(rad => {
-    const tidigare = lagData.filter(t => t.spelare === rad.spelare && t.dag < tillDag);
+    const tidigare = filtreradData.filter(t => t.spelare === rad.spelare && t.dag < tillDag);
     const tidStr = tidigare.reduce((sum, x) => sum + x.strider, 0);
     const tidDgr = new Set(tidigare.map(x => x.dag)).size;
     const snitt = tidDgr === 0 ? 0 : tidStr / tidDgr;
     const okningPct = snitt === 0 ? 0 : ((rad.strider - snitt) / snitt) * 100;
-    return { namn: rad.spelare, idag: rad.strider, snitt, okningPct };
-  }).filter(x => x.snitt > 0 && x.okningPct > 0).sort((a, b) => b.okningPct - a.okningPct).slice(0, 10);
+    return { namn: rad.spelare, imperium: rad.imperium, idag: rad.strider, snitt, okningPct };
+  }).filter(x => x.snitt > 0 && x.okningPct > 0)
+    .sort((a, b) => b.okningPct - a.okningPct)
+    .slice(0, antalTopp);
 
-  if (formLista.length === 0) return `Inga spelare i ${stjarnLagRaw} låg över sitt tidigare snitt under Dag ${tillDag}.`;
+  if (formLista.length === 0) return `Inga spelare låg över sitt tidigare snitt under Dag ${tillDag}.`;
 
-  let text = `══ 🔥 FORMKURVAN: ${stjarnLagRaw.toUpperCase()} (DAG ${tillDag}) ══\n(Dagens strider vs. eget snitt Dag ${franDag}–${tillDag - 1})\n\n`;
-  text += formLista.map((f, idx) => `${idx + 1}. ${f.namn} • 🔥 +${Math.round(f.okningPct)}% (${formateraTal(f.idag)} vs snitt ${formateraTal(f.snitt)})`).join("\n\n");
+  const rubrikTag = valdaImp.length === 1 ? valdaImp.at(0).toUpperCase() : `TOPP ${formLista.length}`;
+  let text = `══ 🔥 FORMKURVAN: ${rubrikTag} (DAG ${tillDag}) ══\n(Dagens strider vs. eget snitt Dag ${franDag}–${tillDag - 1})\n\n`;
+
+  text += formLista.map((f, idx) => {
+    const prefix = (stjarnLag && f.imperium.toLowerCase().includes(stjarnLag)) ? "⭐ " : "";
+    return `${prefix}${idx + 1}. ${f.namn} [${f.imperium}] • 🔥 +${Math.round(f.okningPct)}% (${formateraTal(f.idag)} vs snitt ${formateraTal(f.snitt)})`;
+  }).join("\n\n");
+
   return text + `\n\n────────────────────`;
 }
