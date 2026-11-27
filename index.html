@@ -2,31 +2,42 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>Sök i kalkylark</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sök i databasen</title>
   <script src="https://cloudflare.com"></script>
   <style>
-    body { font-family: sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-    input { width: 100%; padding: 10px; font-size: 16px; margin-bottom: 1rem; box-sizing: border-box; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background-color: #f4f4f4; }
+    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    .controls { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
+    input { flex: 1; min-width: 250px; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; }
+    #status { color: #555; font-size: 0.9rem; margin-bottom: 1rem; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f8f9fa; font-weight: 600; position: sticky; top: 0; }
+    tr:hover { background-color: #f1f5f9; }
   </style>
 </head>
 <body>
 
   <h2>Sök i databasen</h2>
-  <input type="text" id="searchInput" placeholder="Skriv för att söka..." disabled>
-  <p id="status">Laddar data...</p>
-  <table id="dataTable"></table>
+  
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Laddar data..." disabled>
+  </div>
+  
+  <div id="status">Hämtar rader från kalkylarket...</div>
+  
+  <div class="table-wrap">
+    <table id="dataTable"></table>
+  </div>
 
   <script>
-    // Klistra in din publicerade CSV-länk från Google Kalkylark här:
+    // KLISTRA IN DIN LÄNK NEDAN (behåll citattecknen runt länken):
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmo5dVfsfNF8au_pUgwFWc0p1vOj6GO6tYpMoa4hGHHC2-512VpBUkbrsxhX74ev2dma8Hd1zfBnRk/pub?gid=907058282&single=true&output=csv';
     
     let allData = [];
     let headers = [];
 
-    // 1. Hämta och tolka CSV-datan när sidan laddas
     Papa.parse(CSV_URL, {
       download: true,
       header: true,
@@ -34,33 +45,43 @@
       complete: function(results) {
         allData = results.data;
         headers = results.meta.fields;
-        document.getElementById('status').textContent = `Visar de första 100 av ${allData.length} rader.`;
-        document.getElementById('searchInput').disabled = false;
-        renderTable(allData.slice(0, 100)); // Visa max 100 rader åt gången för prestanda
+        const input = document.getElementById('searchInput');
+        input.placeholder = `Sök bland ${allData.length} rader...`;
+        input.disabled = false;
+        updateView(allData);
+      },
+      error: function() {
+        document.getElementById('status').textContent = 'Kunde inte hämta data. Kontrollera CSV-länken.';
       }
     });
 
-    // 2. Filtrera när användaren skriver i sökfältet
     document.getElementById('searchInput').addEventListener('input', function(e) {
-      const query = e.target.value.toLowerCase();
-      const filtered = allData.filter(row => 
-        Object.values(row).some(val => String(val).toLowerCase().includes(query))
-      );
-      document.getElementById('status').textContent = `Hittade ${filtered.length} träffar (visar max 100).`;
-      renderTable(filtered.slice(0, 100));
+      const terms = e.target.value.toLowerCase().trim().split(/\s+/);
+      const filtered = allData.filter(row => {
+        const rowText = Object.values(row).join(' ').toLowerCase();
+        return terms.every(term => rowText.includes(term));
+      });
+      updateView(filtered);
     });
 
-    // 3. Rita ut tabellen
-    function renderTable(rows) {
+    function updateView(rows) {
+      const limit = 100;
+      document.getElementById('status').textContent = 
+        rows.length > limit 
+          ? `Visar de första ${limit} av ${rows.length} träffar.` 
+          : `Visar ${rows.length} träffar.`;
+      
       const table = document.getElementById('dataTable');
       if (rows.length === 0) {
         table.innerHTML = '';
         return;
       }
-      const thead = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-      const tbody = rows.map(row => 
+      
+      const thead = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>`;
+      const tbody = `<tbody>${rows.slice(0, limit).map(row => 
         `<tr>${headers.map(h => `<td>${row[h] || ''}</td>`).join('')}</tr>`
-      ).join('');
+      ).join('')}</tbody>`;
+      
       table.innerHTML = thead + tbody;
     }
   </script>
