@@ -1,142 +1,77 @@
----
+function formateraTal(tal) {
+  return Math.round(tal).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
 
-### Fil 5: `app.js`
-```javascript
-let rawData = [];
-let currentTab = 'imperier';
-let minDayAvailable = 1;
-let maxDayAvailable = 1;
+function startaApp() {
+  if (allaRader.length === 0) return;
 
-async function init() {
-  try {
-    const res = await fetch('data.csv?t=' + Date.now());
-    if (!res.ok) throw new Error("Hittade inte data.csv (HTTP " + res.status + ")");
-    const text = await res.text();
-    rawData = DataUtils.parseCSV(text);
+  // Hitta lägsta och högsta dag i filen automatiskt
+  const dagar = allaRader.map(r => r.dag);
+  document.getElementById("franDag").value = Math.min(...dagar);
+  document.getElementById("tillDag").value = Math.max(...dagar);
 
-    if (!rawData.length) {
-      const preview = text.split(/\r?\n/).slice(0, 3).join("\n");
-      document.getElementById('output').textContent =
-        "⚠️ Filen data.csv laddades in, men 0 giltiga rader kunde tolkas.\n\n" +
-        "Första 3 raderna i din data.csv ser ut så här:\n" + preview;
-      document.getElementById('impList').textContent = "Inga giltiga rader hittades.";
-      return;
+  // Lyssna på ändringar i dag-rutorna
+  document.getElementById("franDag").addEventListener("input", uppdateraUtskrift);
+  document.getElementById("tillDag").addEventListener("input", uppdateraUtskrift);
+
+  uppdateraUtskrift();
+}
+
+function uppdateraUtskrift() {
+  const franDag = parseInt(document.getElementById("franDag").value, 10) || 1;
+  const tillDag = parseInt(document.getElementById("tillDag").value, 10) || 1;
+  const arEnskild = franDag === tillDag;
+
+  const periodData = allaRader.filter(r => r.dag >= franDag && r.dag <= tillDag);
+  const imperieKarta = {};
+
+  periodData.forEach(rad => {
+    if (!imperieKarta[rad.imperium]) {
+      imperieKarta[rad.imperium] = {
+        namn: rad.imperium,
+        totStrider: 0,
+        totSpelare: new Set(),
+        dagStrider: 0,
+        dagSpelare: new Set()
+      };
     }
 
-    setupControls();
-    render();
-  } catch (e) {
-    document.getElementById('output').textContent =
-      "Kunde inte ladda data.csv automatiskt (" + e.message + ").\n\n" +
-      "Ladda upp data.csv i samma mapp på GitHub som index.html, eller klistra in din rådata i rutan till vänster!";
-    document.getElementById('impList').textContent = "Ingen data laddad.";
-  }
+    imperieKarta[rad.imperium].totStrider += rad.strider;
+    imperieKarta[rad.imperium].totSpelare.add(rad.spelare);
+
+    if (rad.dag === tillDag) {
+      imperieKarta[rad.imperium].dagStrider += rad.strider;
+      imperieKarta[rad.imperium].dagSpelare.add(rad.spelare);
+    }
+  });
+
+  // Sortera efter totalt antal strider och ta Topp 20
+  const sorterade = Object.values(imperieKarta)
+    .sort((a, b) => b.totStrider - a.totStrider)
+    .slice(0, 20);
+
+  const rubrikPeriod = arEnskild ? `DAG ${franDag}` : `DAG ${franDag}–${tillDag}`;
+  const underRubrik = arEnskild
+    ? `(Dag ${franDag} (spelare) • Enskild dag)`
+    : `(Dag ${tillDag} (spelare) • Totalt Dag ${franDag}–${tillDag})`;
+
+  let text = `══ 📊 STRIDSSTATISTIK – ${rubrikPeriod} ══\n${underRubrik}\n\n`;
+
+  text += sorterade.map((imp, index) => {
+    const plac = index + 1;
+    return `${plac}. ${imp.namn}\n   ↳ ⚔️ ${formateraTal(imp.dagStrider)} (${imp.dagSpelare.size})  •  ⚔️ ${formateraTal(imp.totStrider)} (${imp.totSpelare.size})`;
+  }).join("\n\n");
+
+  text += `\n\n────────────────────\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
+
+  document.getElementById("utskrift").textContent = text;
 }
 
-function loadPastedData() {
-  const txt = document.getElementById('rawPaste').value;
-  if (!txt.trim()) return;
-  rawData = DataUtils.parseCSV(txt);
-  setupControls();
-  render();
-  showStatus("✅ Inläst " + rawData.length + " rader!");
-}
-
-function setupControls() {
-  if (!rawData.length) return;
-  const days = rawData.map(r => r.dag);
-  minDayAvailable = Math.min(...days);
-  maxDayAvailable = Math.max(...days);
-  document.getElementById('startDag').value = minDayAvailable;
-  document.getElementById('slutDag').value = maxDayAvailable;
-
-  const impMap = {};
-  rawData.forEach(r => { impMap[r.imp] = (impMap[r.imp] || 0) + r.strider; });
-  const sortedImps = Object.keys(impMap).sort((a, b) => impMap[b] - impMap[a]);
-
-  const listEl = document.getElementById('impList');
-  listEl.innerHTML = sortedImps.map(imp => `
-    <div class="imp-row" data-name="${imp.toLowerCase()}">
-      <label><input type="checkbox" class="imp-check" value="${imp}" onchange="render()"> ${imp}</label>
-      <label class="paren-toggle" title="Visa inom parentes"><input type="checkbox" class="paren-check" value="${imp}" onchange="render()"> ( )</label>
-    </div>
-  `).join("");
-}
-
-function setDays(mode) {
-  if (mode === 'latest') {
-    document.getElementById('startDag').value = maxDayAvailable;
-    document.getElementById('slutDag').value = maxDayAvailable;
-  } else if (mode === 'last3') {
-    document.getElementById('startDag').value = Math.max(minDayAvailable, maxDayAvailable - 2);
-    document.getElementById('slutDag').value = maxDayAvailable;
-  } else {
-    document.getElementById('startDag').value = minDayAvailable;
-    document.getElementById('slutDag').value = maxDayAvailable;
-  }
-  render();
-}
-
-function filterImpList() {
-  const q = document.getElementById('impSearch').value.toLowerCase();
-  document.querySelectorAll('.imp-row').forEach(row => {
-    row.style.display = row.dataset.name.includes(q) ? 'flex' : 'none';
+function kopieraText() {
+  const text = document.getElementById("utskrift").textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("kopieraBtn");
+    btn.textContent = "✅ Kopierat!";
+    setTimeout(() => { btn.textContent = "📋 Kopiera till spelet"; }, 2500);
   });
 }
-
-function clearImps() {
-  document.querySelectorAll('.imp-check, .paren-check').forEach(c => c.checked = false);
-  render();
-}
-
-function setTab(tab, btn) {
-  currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  render();
-}
-
-function render() {
-  if (!rawData.length) return;
-  const startDag = parseInt(document.getElementById('startDag').value, 10) || minDayAvailable;
-  const slutDag = parseInt(document.getElementById('slutDag').value, 10) || maxDayAvailable;
-  const rawStarImp = document.getElementById('starImp').value.trim();
-
-  const ctx = {
-    rawData,
-    startDag,
-    slutDag,
-    periodDagar: Math.max(1, slutDag - startDag + 1),
-    ärEnskild: startDag === slutDag,
-    periodRubrik: startDag === slutDag ? `DAG ${startDag}` : `DAG ${startDag}–${slutDag}`,
-    rawStarImp,
-    starImp: rawStarImp.toLowerCase(),
-    topLimit: parseInt(document.getElementById('topLimit').value, 10) || 20,
-    selectedImps: Array.from(document.querySelectorAll('.imp-check:checked')).map(c => c.value),
-    parenImps: Array.from(document.querySelectorAll('.paren-check:checked')).map(c => c.value),
-    perData: rawData.filter(r => r.dag >= startDag && r.dag <= slutDag),
-    dagData: rawData.filter(r => r.dag === slutDag)
-  };
-
-  const reportFn = Reports[currentTab];
-  document.getElementById('output').textContent = reportFn ? reportFn(ctx) : "Okänd flik.";
-}
-
-function copyResult() {
-  const txt = document.getElementById('output').textContent;
-  navigator.clipboard.writeText(txt).then(() => {
-    showStatus("✅ Kopierat! Klistra in i spelet med Ctrl+V.");
-  });
-}
-
-function showStatus(msg) {
-  const el = document.getElementById('statusMsg');
-  el.textContent = msg;
-  setTimeout(() => { el.textContent = "Redo att kopiera"; }, 3500);
-}
-
-['startDag', 'slutDag', 'starImp', 'topLimit'].forEach(id => {
-  document.getElementById(id).addEventListener('input', render);
-});
-
-init();
