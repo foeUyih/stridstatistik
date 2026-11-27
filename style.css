@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 850px;
   margin: 0 auto;
 }
 
@@ -32,7 +32,7 @@ h1 {
 
 .row {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -47,10 +47,10 @@ input[type="number"], input[type="text"] {
   background-color: #0f172a;
   border: 1px solid #334155;
   color: #f8fafc;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 6px;
-  font-size: 1rem;
-  width: 130px;
+  font-size: 0.95rem;
+  width: 110px;
 }
 
 button {
@@ -86,7 +86,7 @@ button:hover {
 }
 
 .imp-box {
-  max-height: 180px;
+  max-height: 170px;
   overflow-y: auto;
   background-color: #0f172a;
   border: 1px solid #334155;
@@ -115,10 +115,31 @@ button:hover {
   cursor: pointer;
 }
 
-h3 {
-  margin-top: 0;
-  color: #f59e0b;
-  font-size: 1rem;
+/* FLIKAR */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  padding: 9px 14px;
+  font-size: 0.9rem;
+}
+
+.tab-btn:hover {
+  border-color: #f59e0b;
+  background-color: #1e293b;
+}
+
+.tab-btn.active {
+  background-color: #f59e0b;
+  color: #000;
+  border-color: #f59e0b;
 }
 
 pre {
