@@ -3,29 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FoE Statistik – Grund</title>
+  <title>FoE Statistik – SE5</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="container">
-    <h1>⚔️ FoE Statistik</h1>
+    <h1>⚔️ FoE Stridsstatistik</h1>
     <p id="status">Laddar data.csv...</p>
 
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>Dag</th>
-          <th>Spelare</th>
-          <th>Imperium</th>
-          <th>Points change</th>
-          <th>Strider</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <!-- KONTROLLPANEL -->
+    <div class="panel">
+      <div class="row">
+        <div>
+          <label for="franDag">Från dag:</label>
+          <input type="number" id="franDag" min="1" value="1">
+        </div>
+        <div>
+          <label for="tillDag">Till dag:</label>
+          <input type="number" id="tillDag" min="1" value="1">
+        </div>
+        <div style="align-self: end;">
+          <button id="kopieraBtn" onclick="kopieraText()">📋 Kopiera till spelet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FÄRDIG UTSKRIFT -->
+    <div class="panel">
+      <h3>Färdig utskrift (Imperier Topp 20)</h3>
+      <pre id="utskrift">Väntar på data...</pre>
+    </div>
   </div>
 
   <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
