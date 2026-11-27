@@ -9,8 +9,14 @@
 <body>
 
   <div class="container">
-    <h1>⚔️ FoE Stridsstatistik</h1>
-    <p id="status">Laddar data.csv...</p>
+    <!-- SIDHUVUD MED PROFILBILD -->
+    <header class="top-header">
+      <img src="uyih.jpg" alt="Profilbild" class="avatar" onerror="this.style.display='none'">
+      <div>
+        <h1>⚔️ FoE Stridsstatistik</h1>
+        <p id="status">Laddar data.csv...</p>
+      </div>
+    </header>
 
     <!-- KONTROLLPANEL -->
     <div class="panel">
@@ -39,7 +45,7 @@
       <!-- IMPERIEURVAL -->
       <div style="margin-top: 16px;">
         <div class="imp-header">
-          <label style="margin:0;">Urval imperier (lämna tomt för Topp 20 • kryssa i <b>( )</b> för parentes):</label>
+          <label style="margin:0;">Urval imperier (lämna tomt för Topp X • kryssa i <b>( )</b> för parentes):</label>
           <button type="button" class="btn-mini" onclick="rensaVal()">Rensa val</button>
         </div>
         <div id="imperieLista" class="imp-box">Laddar imperier...</div>
@@ -52,9 +58,9 @@
       <button class="tab-btn" onclick="bytFlik('spelare', this)">⚔️ Spelare</button>
       <button class="tab-btn" onclick="bytFlik('effektivitet', this)">⚡ Stridsindex</button>
       <button class="tab-btn" onclick="bytFlik('hojdpunkter', this)">🏆 Höjdpunkter</button>
-      <button class="tab-btn" onclick="bytFlik('intern', this)">🛡️ Intern Topplista</button>
       <button class="tab-btn" onclick="bytFlik('duell', this)">🥊 Rivalduellen</button>
       <button class="tab-btn" onclick="bytFlik('form', this)">🔥 Formkurvan</button>
+      <button class="tab-btn" onclick="bytFlik('imperieinfo', this)">🏰 Imperieinfo</button>
     </div>
 
     <!-- FÄRDIG UTSKRIFT -->
