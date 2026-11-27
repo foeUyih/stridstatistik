@@ -32,7 +32,18 @@ function bytFlik(flik, knapp) {
   aktivFlik = flik;
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   knapp.classList.add("active");
-  uppdateraUtskrift();
+
+  const utskriftPanel = document.getElementById("utskriftPanel");
+  const infoVy = document.getElementById("imperieinfoVy");
+
+  if (flik === "imperieinfo") {
+    utskriftPanel.style.display = "none";
+    infoVy.style.display = "block";
+  } else {
+    utskriftPanel.style.display = "block";
+    infoVy.style.display = "none";
+    uppdateraUtskrift();
+  }
 }
 
 function rensaVal() {
@@ -79,6 +90,15 @@ function kopieraText() {
     const btn = document.getElementById("kopieraBtn");
     btn.textContent = "✅ Kopierat!";
     setTimeout(() => { btn.textContent = "📋 Kopiera till spelet"; }, 2500);
+  });
+}
+
+function kopieraValkommen() {
+  const text = document.getElementById("valkomstText").textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("kopieraValkommenBtn");
+    btn.textContent = "✅ Kopierat!";
+    setTimeout(() => { btn.textContent = "📋 Kopiera välkomsttext"; }, 2500);
   });
 }
 
