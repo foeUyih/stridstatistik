@@ -1,7 +1,3 @@
-### 4. `app.js` (Styrning, knappar & gränssnitt)
-Skapa filen **`app.js`** och klistra in detta:
-
-```javascript
 let rawData = [];
 let currentTab = 'imperier';
 let minDayAvailable = 1;
@@ -18,7 +14,6 @@ async function init() {
       const preview = text.split(/\r?\n/).slice(0, 3).join("\n");
       document.getElementById('output').textContent =
         "⚠️ Filen data.csv laddades in, men 0 giltiga rader kunde tolkas.\n\n" +
-        "Kontrollera att kolumnerna stämmer:\nKolumn A = Dag (siffra)\nKolumn C = Spelare\nKolumn D = Imperium\nKolumn F = Points change\nKolumn J = Strider\n\n" +
         "Första 3 raderna i din data.csv ser ut så här:\n" + preview;
       document.getElementById('impList').textContent = "Inga giltiga rader hittades.";
       return;
@@ -29,11 +24,11 @@ async function init() {
   } catch (e) {
     document.getElementById('output').textContent =
       "Kunde inte ladda data.csv automatiskt (" + e.message + ").\n\n" +
-      "Gör så här:\n1. Ladda upp data.csv i samma mapp på GitHub som index.html, ELLER\n" +
-      "2. Fäll ut 'Klistra in egen rådata lokalt' till vänster och klistra in dina rader!";
+      "Ladda upp data.csv i samma mapp på GitHub som index.html, eller klistra in din rådata i rutan till vänster!";
     document.getElementById('impList').textContent = "Ingen data laddad.";
   }
 }
+
 function loadPastedData() {
   const txt = document.getElementById('rawPaste').value;
   if (!txt.trim()) return;
