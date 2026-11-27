@@ -33,6 +33,17 @@ function skapaDuellRapport(info) {
   const d1 = periodData.filter(r => r.imperium.toLowerCase() === lagEtt.toLowerCase());
   const d2 = periodData.filter(r => r.imperium.toLowerCase() === lagTva.toLowerCase());
 
+  // Senaste dagen (tillDag)
+  const dagRows1 = d1.filter(r => r.dag === tillDag);
+  const dagRows2 = d2.filter(r => r.dag === tillDag);
+  const dagTot1 = dagRows1.reduce((sum, r) => sum + r.strider, 0);
+  const dagTot2 = dagRows2.reduce((sum, r) => sum + r.strider, 0);
+  const dagDiff = dagTot1 - dagTot2;
+  const dagDiffText = dagDiff >= 0 ? `+${formateraTal(dagDiff)}` : formateraTal(dagDiff);
+  const dagSp1 = new Set(dagRows1.map(r => r.spelare)).size;
+  const dagSp2 = new Set(dagRows2.map(r => r.spelare)).size;
+
+  // Hela perioden
   const tot1 = d1.reduce((sum, r) => sum + r.strider, 0);
   const tot2 = d2.reduce((sum, r) => sum + r.strider, 0);
   const diff = tot1 - tot2;
@@ -53,12 +64,12 @@ function skapaDuellRapport(info) {
   }
 
   return `══ 🥊 RIVALDUELLEN (${rubrikPeriod}) ══\n${lagEtt}  VS  ${lagTva}\n\n` +
-    `⚔️ Totala strider:\n   ↳ ${formateraTal(tot1)}  vs  ${formateraTal(tot2)}  (${diffText})\n\n` +
+    `🔥 Strider Dag ${tillDag}:\n   ↳ ${formateraTal(dagTot1)} (${dagSp1} st)  vs  ${formateraTal(dagTot2)} (${dagSp2} st)  (${dagDiffText})\n\n` +
+    `⚔️ Totala strider (${rubrikPeriod}):\n   ↳ ${formateraTal(tot1)}  vs  ${formateraTal(tot2)}  (${diffText})\n\n` +
     `👥 Unika spelare i topp 200:\n   ↳ ${sp1} st  vs  ${sp2} st\n\n` +
     `🎯 Snitt/dag per aktiv spelare:\n   ↳ ${formateraTal(snitt1)}  vs  ${formateraTal(snitt2)} strider/dag\n\n` +
     `🏆 Vunna dagar i inbördes möten:\n   ↳ ${vinster1} – ${vinster2}\n────────────────────`;
 }
-
 function skapaFormRapport(info) {
   const { periodData, franDag, tillDag, arEnskild, valdaImp, antalTopp, stjarnLag } = info;
   if (arEnskild) return "Välj minst 2 dagar (Från dag < Till dag) för att se formkurvan.";
