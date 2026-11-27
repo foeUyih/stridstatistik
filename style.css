@@ -15,16 +15,34 @@ body {
   margin: 0 auto;
 }
 
+/* SIDHUVUD & PROFILBILD */
+.top-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f59e0b;
+  background-color: #1e293b;
+  flex-shrink: 0;
+}
+
 h1 {
   color: #f59e0b;
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
   font-size: 1.7rem;
 }
 
 #status {
   color: #10b981;
   font-weight: bold;
-  margin: 0 0 16px 0;
+  margin: 0;
   font-size: 0.95rem;
 }
 
@@ -132,8 +150,8 @@ button:hover {
 /* FLIKAR */
 .tabs {
   display: flex;
-  gap: 8px;
   justify-content: center;
+  gap: 8px;
   margin-top: 18px;
   flex-wrap: wrap;
 }
@@ -157,7 +175,6 @@ button:hover {
   border-color: #f59e0b;
 }
 
-/* UTSKRIFTSRUTA: Håller rader på en rad utan onödig radbrytning */
 pre {
   background-color: #0f172a;
   border: 1px solid #334155;
@@ -175,6 +192,11 @@ pre {
 @media (max-width: 650px) {
   body {
     padding: 12px;
+  }
+
+  .avatar {
+    width: 50px;
+    height: 50px;
   }
 
   h1 {
