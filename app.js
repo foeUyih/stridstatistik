@@ -1,3 +1,4 @@
+```javascript
 let rawData = [];
 let currentTab = 'imperier';
 let minDayAvailable = 1;
