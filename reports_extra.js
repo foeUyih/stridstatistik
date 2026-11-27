@@ -22,7 +22,7 @@ function skapaInternRapport(info) {
     return `${idx + 1}. ${sp.namn} • ⚔️ ${formateraTal(sp.tot)} (${formateraTal(snitt)}/dag • ${andel} • ${sp.dagar.size}/${periodDagar} dgr)`;
   }).join("\n\n");
 
-  return text + `\n\n────────────────────\nTotalt ${sorterade.length} spelare i topp 200 • Summa: ${formateraTal(lagTot)} strider`;
+  return text + `\n\n────────────────────\nTotalt ${sorterade.length} spelare i topp 200 • Summa: ${formateraTal(lagTot)} strider\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
 }
 
 function skapaDuellRapport(info) {
@@ -33,7 +33,6 @@ function skapaDuellRapport(info) {
   const d1 = periodData.filter(r => r.imperium.toLowerCase() === lagEtt.toLowerCase());
   const d2 = periodData.filter(r => r.imperium.toLowerCase() === lagTva.toLowerCase());
 
-  // Senaste dagen (tillDag)
   const dagRows1 = d1.filter(r => r.dag === tillDag);
   const dagRows2 = d2.filter(r => r.dag === tillDag);
   const dagTot1 = dagRows1.reduce((sum, r) => sum + r.strider, 0);
@@ -43,7 +42,6 @@ function skapaDuellRapport(info) {
   const dagSp1 = new Set(dagRows1.map(r => r.spelare)).size;
   const dagSp2 = new Set(dagRows2.map(r => r.spelare)).size;
 
-  // Hela perioden
   const tot1 = d1.reduce((sum, r) => sum + r.strider, 0);
   const tot2 = d2.reduce((sum, r) => sum + r.strider, 0);
   const diff = tot1 - tot2;
@@ -68,13 +66,13 @@ function skapaDuellRapport(info) {
     `⚔️ Totala strider (${rubrikPeriod}):\n   ↳ ${formateraTal(tot1)}  vs  ${formateraTal(tot2)}  (${diffText})\n\n` +
     `👥 Unika spelare i topp 200:\n   ↳ ${sp1} st  vs  ${sp2} st\n\n` +
     `🎯 Snitt/dag per aktiv spelare:\n   ↳ ${formateraTal(snitt1)}  vs  ${formateraTal(snitt2)} strider/dag\n\n` +
-    `🏆 Vunna dagar i inbördes möten:\n   ↳ ${vinster1} – ${vinster2}\n────────────────────`;
+    `🏆 Vunna dagar i inbördes möten:\n   ↳ ${vinster1} – ${vinster2}\n────────────────────\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
 }
+
 function skapaFormRapport(info) {
   const { periodData, franDag, tillDag, arEnskild, valdaImp, antalTopp, stjarnLag } = info;
   if (arEnskild) return "Välj minst 2 dagar (Från dag < Till dag) för att se formkurvan.";
 
-  // Filtrera på ikryssade imperier, eller ta hela servern om inget är valt
   const filtreradData = valdaImp.length > 0
     ? periodData.filter(r => valdaImp.includes(r.imperium))
     : periodData;
@@ -102,5 +100,5 @@ function skapaFormRapport(info) {
     return `${prefix}${idx + 1}. ${f.namn} [${f.imperium}] • 🔥 +${Math.round(f.okningPct)}% (${formateraTal(f.idag)} vs snitt ${formateraTal(f.snitt)})`;
   }).join("\n\n");
 
-  return text + `\n\n────────────────────`;
+  return text + `\n\n────────────────────\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
 }
