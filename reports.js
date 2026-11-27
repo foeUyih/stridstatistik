@@ -169,7 +169,7 @@ const Reports = {
       `📈 Dagens spelarraket (Dag ${förraDag} → ${slutDag}):\n   ↳ ${raketSpText}\n\n` +
       `🌟 Dagens nykomling (Dag ${slutDag}):\n   ↳ ${nykomlingText}\n\n` +
       `🧱 Järnmannen (högst lägstanivå alla dagar):\n   ↳ ${järnText}\n\n` +
-      🏅 Flest strider totalt (${periodRubrik.toLowerCase()}):\n   ↳ ${bästSpPer.sp} [${bästSpPer.imp}] – ${fmt(bästSpPer.tot)} strider (${bästSpPer.dgr}/${periodDagar} dgr)\n\n +
+      `🏅 Flest strider totalt (${periodRubrik.toLowerCase()}):\n   ↳ ${bästSpPer.sp} [${bästSpPer.imp}] – ${fmt(bästSpPer.tot)} strider (${bästSpPer.dgr}/${periodDagar} dgr)\n\n +
 ⚡ Mest effektiva spelare (${periodRubrik.toLowerCase()}):\n   ↳ ${bästEffSp.sp} [${bästEffSp.imp}] – index ${fmtDec(bästEffSp.index)} (${bästEffSp.dgr}/${periodDagar} dgr)\n\n +
 🌡️ Totalt i topp 200 (Dag ${slutDag}): ${fmt(totServerDag)} strider (snitt ${fmt(totServerDag/200)}/spelare)\n────────────────────;
 },
