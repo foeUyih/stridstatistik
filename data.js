@@ -29,10 +29,15 @@ const DataUtils = {
   parseCSV(text) {
     const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
     if (!lines.length) return [];
-    const firstLine = lines.at(0);
-    const sep = firstLine.includes("\t") ? "\t" : (firstLine.includes(";") ? ";" : ",");
-    const rows = [];
 
+    // Räkna vilken avgränsare som är vanligast på de första 5 raderna
+    const sample = lines.slice(0, 5).join("\n");
+    const tabs = (sample.match(/\t/g) || []).length;
+    const semis = (sample.match(/;/g) || []).length;
+    const commas = (sample.match(/,/g) || []).length;
+    const sep = (tabs >= semis && tabs >= commas && tabs > 0) ? "\t" : (semis >= commas && semis > 0 ? ";" : ",");
+
+    const rows = [];
     for (let i = 0; i < lines.length; i++) {
       const cols = [];
       let cur = "", inQuotes = false;
