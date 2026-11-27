@@ -66,9 +66,9 @@ function uppdateraUtskrift() {
   else if (aktivFlik === "spelare") resultat = skapaSpelarRapport(info);
   else if (aktivFlik === "effektivitet") resultat = skapaEffektivitetsRapport(info);
   else if (aktivFlik === "hojdpunkter") resultat = skapaHojdpunkterRapport(info);
-  else if (aktivFlik === "intern") resultat = skapaInternRapport(info);
   else if (aktivFlik === "duell") resultat = skapaDuellRapport(info);
   else if (aktivFlik === "form") resultat = skapaFormRapport(info);
+  else if (aktivFlik === "imperieinfo") resultat = skapaImperieInfoRapport(info);
 
   document.getElementById("utskrift").textContent = resultat;
 }
