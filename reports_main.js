@@ -110,7 +110,7 @@ function skapaEffektivitetsRapport(info) {
     return `${prefix}${sp.plac}. ${sp.namn} [${sp.imperium}] • ⚔️ ${formateraDecimal(sp.index)} (${sp.antalDgr} dgr)`;
   }).join("\n\n");
 
-  return text + `\n\n────────────────────\nℹ️ Källa: https://foestats.com`;
+  return text + `\n\n────────────────────\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
 }
 
 function skapaHojdpunkterRapport(info) {
@@ -173,5 +173,5 @@ function skapaHojdpunkterRapport(info) {
     `📈 Dagens klättrare (Dag ${forraDag} → ${tillDag}):\n   ↳ ${klattrareText}\n\n` +
     `🏅 Flest strider totalt (${rubrikPeriod.toLowerCase()}):\n   ↳ ${bastPerSp.namn} [${bastPerSp.imperium}] – ${formateraTal(bastPerSp.tot)} strider (${bastPerSp.dgr}/${periodDagar} dgr)\n\n` +
     `⚡ Mest effektiva spelare (${rubrikPeriod.toLowerCase()}):\n   ↳ ${bastEffSp.namn} [${bastEffSp.imperium}] – index ${formateraDecimal(bastEffSp.index)} (${bastEffSp.dgr}/${periodDagar} dgr)\n\n` +
-    `🌡️ Totalt i topp 200 (Dag ${tillDag}): ${formateraTal(serverTot)} strider (snitt ${formateraTal(serverTot / 200)}/spelare)\n────────────────────`;
+    `🌡️ Totalt i topp 200 (Dag ${tillDag}): ${formateraTal(serverTot)} strider (snitt ${formateraTal(serverTot / 200)}/spelare)\n────────────────────\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
 }
