@@ -11,12 +11,26 @@ function tvattaTal(text) {
   return baraSiffror ? parseInt(baraSiffror, 10) : 0;
 }
 
+function formateraDatum(datumObj) {
+  if (!datumObj || isNaN(datumObj.getTime())) return "";
+  const ar = datumObj.getFullYear();
+  const manad = String(datumObj.getMonth() + 1).padStart(2, "0");
+  const dag = String(datumObj.getDate()).padStart(2, "0");
+  const tim = String(datumObj.getHours()).padStart(2, "0");
+  const min = String(datumObj.getMinutes()).padStart(2, "0");
+  return `${ar}-${manad}-${dag} ${tim}:${min}`;
+}
+
 async function laddaData() {
   const statusEl = document.getElementById("status");
 
   try {
     const svar = await fetch("data.csv?v=" + Date.now());
     if (!svar.ok) throw new Error("Kunde inte hitta data.csv");
+
+    // Hämta när data.csv senast ändrades på servern
+    const lastMod = svar.headers.get("Last-Modified");
+    const datumText = lastMod ? ` • Uppdaterad: ${formateraDatum(new Date(lastMod))}` : "";
 
     const text = await svar.text();
     const rader = text.split(/\r?\n/).filter(rad => rad.trim() !== "");
@@ -39,15 +53,14 @@ async function laddaData() {
       }
     }
 
-    statusEl.textContent = `✅ Laddade in ${allaRader.length} giltiga rader!`;
+    statusEl.textContent = `✅ Laddade in ${allaRader.length} giltiga rader!${datumText}`;
 
-    // Starta appen när datan är klar
-    startaApp();
+    if (typeof startaApp === "function") {
+      startaApp();
+    }
 
   } catch (fel) {
     statusEl.style.color = "#ef4444";
     statusEl.textContent = `❌ Fel: ${fel.message}`;
   }
 }
-
-
