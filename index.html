@@ -23,20 +23,33 @@
           <label for="tillDag">Till dag:</label>
           <input type="number" id="tillDag" min="1" value="1">
         </div>
+        <div>
+          <label for="stjarnLag">Stjärna (⭐) för lag:</label>
+          <input type="text" id="stjarnLag" value="Excalibur" placeholder="T.ex. Excalibur">
+        </div>
         <div style="align-self: end;">
           <button id="kopieraBtn" onclick="kopieraText()">📋 Kopiera till spelet</button>
         </div>
+      </div>
+
+      <!-- IMPERIEURVAL -->
+      <div style="margin-top: 16px;">
+        <div class="imp-header">
+          <label style="margin:0;">Urval imperier (lämna tomt för Topp 20 • kryssa i <b>( )</b> för parentes):</label>
+          <button type="button" class="btn-mini" onclick="rensaVal()">Rensa val</button>
+        </div>
+        <div id="imperieLista" class="imp-box">Laddar imperier...</div>
       </div>
     </div>
 
     <!-- FÄRDIG UTSKRIFT -->
     <div class="panel">
-      <h3>Färdig utskrift (Imperier Topp 20)</h3>
+      <h3>Färdig utskrift (Imperier)</h3>
       <pre id="utskrift">Väntar på data...</pre>
     </div>
   </div>
 
-<script src="data.js"></script>
-<script src="app.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
