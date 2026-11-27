@@ -5,15 +5,36 @@ function formateraTal(tal) {
 function startaApp() {
   if (allaRader.length === 0) return;
 
-  // Hitta lägsta och högsta dag i filen automatiskt
+  // 1. Sätt startdag och slutdag
   const dagar = allaRader.map(r => r.dag);
   document.getElementById("franDag").value = Math.min(...dagar);
   document.getElementById("tillDag").value = Math.max(...dagar);
 
-  // Lyssna på ändringar i dag-rutorna
+  // 2. Bygg listan med imperier sorterad efter totala strider
+  const impSumma = {};
+  allaRader.forEach(r => {
+    impSumma[r.imperium] = (impSumma[r.imperium] || 0) + r.strider;
+  });
+  const unikaImp = Object.keys(impSumma).sort((a, b) => impSumma[b] - impSumma[a]);
+
+  const listaEl = document.getElementById("imperieLista");
+  listaEl.innerHTML = unikaImp.map(imp => `
+    <div class="imp-rad">
+      <label><input type="checkbox" class="val-imp" value="${imp}" onchange="uppdateraUtskrift()"> ${imp}</label>
+      <label><input type="checkbox" class="par-imp" value="${imp}" onchange="uppdateraUtskrift()"> ( )</label>
+    </div>
+  `).join("");
+
+  // 3. Lyssna på ändringar
   document.getElementById("franDag").addEventListener("input", uppdateraUtskrift);
   document.getElementById("tillDag").addEventListener("input", uppdateraUtskrift);
+  document.getElementById("stjarnLag").addEventListener("input", uppdateraUtskrift);
 
+  uppdateraUtskrift();
+}
+
+function rensaVal() {
+  document.querySelectorAll(".val-imp, .par-imp").forEach(cb => cb.checked = false);
   uppdateraUtskrift();
 }
 
@@ -21,6 +42,10 @@ function uppdateraUtskrift() {
   const franDag = parseInt(document.getElementById("franDag").value, 10) || 1;
   const tillDag = parseInt(document.getElementById("tillDag").value, 10) || 1;
   const arEnskild = franDag === tillDag;
+
+  // Läs av ikryssade imperier och parenteser
+  const valdaImp = Array.from(document.querySelectorAll(".val-imp:checked")).map(cb => cb.value);
+  const parentesImp = Array.from(document.querySelectorAll(".par-imp:checked")).map(cb => cb.value);
 
   const periodData = allaRader.filter(r => r.dag >= franDag && r.dag <= tillDag);
   const imperieKarta = {};
@@ -45,10 +70,15 @@ function uppdateraUtskrift() {
     }
   });
 
-  // Sortera efter totalt antal strider och ta Topp 20
-  const sorterade = Object.values(imperieKarta)
+  // Sortera alla och behåll deras riktiga serverplacering
+  const allaSorterade = Object.values(imperieKarta)
     .sort((a, b) => b.totStrider - a.totStrider)
-    .slice(0, 20);
+    .map((imp, idx) => ({ ...imp, plac: idx + 1 }));
+
+  // Visa valda imperier, eller Topp 20 om inget är ikryssat
+  const visade = valdaImp.length > 0
+    ? allaSorterade.filter(imp => valdaImp.includes(imp.namn))
+    : allaSorterade.slice(0, 20);
 
   const rubrikPeriod = arEnskild ? `DAG ${franDag}` : `DAG ${franDag}–${tillDag}`;
   const underRubrik = arEnskild
@@ -57,9 +87,9 @@ function uppdateraUtskrift() {
 
   let text = `══ 📊 STRIDSSTATISTIK – ${rubrikPeriod} ══\n${underRubrik}\n\n`;
 
-  text += sorterade.map((imp, index) => {
-    const plac = index + 1;
-    return `${plac}. ${imp.namn}\n   ↳ ⚔️ ${formateraTal(imp.dagStrider)} (${imp.dagSpelare.size})  •  ⚔️ ${formateraTal(imp.totStrider)} (${imp.totSpelare.size})`;
+  text += visade.map(imp => {
+    const visatNamn = parentesImp.includes(imp.namn) ? `(${imp.namn})` : imp.namn;
+    return `${imp.plac}. ${visatNamn}\n   ↳ ⚔️ ${formateraTal(imp.dagStrider)} (${imp.dagSpelare.size})  •  ⚔️ ${formateraTal(imp.totStrider)} (${imp.totSpelare.size})`;
   }).join("\n\n");
 
   text += `\n\n────────────────────\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
@@ -75,4 +105,5 @@ function kopieraText() {
     setTimeout(() => { btn.textContent = "📋 Kopiera till spelet"; }, 2500);
   });
 }
+
 laddaData();
