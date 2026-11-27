@@ -75,3 +75,4 @@ function kopieraText() {
     setTimeout(() => { btn.textContent = "📋 Kopiera till spelet"; }, 2500);
   });
 }
+laddaData();
