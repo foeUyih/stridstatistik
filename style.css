@@ -219,6 +219,50 @@ pre {
     width: 100%;
     padding: 12px;
   }
+  /* IMPERIEINFO */
+.info-rubrik {
+  color: #f59e0b;
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+}
+
+.info-text {
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.info-kort {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.info-kort h4 {
+  color: #f8fafc;
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 6px;
+}
+
+.info-kort ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+.info-kort li {
+  margin-bottom: 6px;
+}
 
   .tab-btn {
     flex: 1 1 auto;
