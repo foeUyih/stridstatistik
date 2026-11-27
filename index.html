@@ -3,92 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FoE Stridsstatistik – SE5</title>
+  <title>FoE Statistik – Grund</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-  <header>
-    <h1>⚔️ FoE Stridsstatistik – SE5</h1>
-    <p class="subtitle">Anpassa dagar och imperier i kontrollpanelen och kopiera färdig formaterad text till spelchatten.</p>
-  </header>
+  <div class="container">
+    <h1>⚔️ FoE Statistik</h1>
+    <p id="status">Laddar data.csv...</p>
 
-  <div class="main-grid">
-    <!-- VÄNSTER SPALT: KONTROLLPANEL -->
-    <aside class="panel">
-      <h2 class="section-title">1. Tidsperiod</h2>
-      <div class="row-2">
-        <div>
-          <label for="startDag">Från dag</label>
-          <input type="number" id="startDag" min="1" value="1">
-        </div>
-        <div>
-          <label for="slutDag">Till dag</label>
-          <input type="number" id="slutDag" min="1" value="5">
-        </div>
-      </div>
-      <div class="quick-btns">
-        <button class="btn-mini" onclick="setDays('latest')">Senaste dag</button>
-        <button class="btn-mini" onclick="setDays('last3')">Senaste 3 dgr</button>
-        <button class="btn-mini" onclick="setDays('all')">Hela perioden</button>
-      </div>
-
-      <h2 class="section-title">2. Visning & Markering</h2>
-      <div class="row-2">
-        <div>
-          <label for="starImp">Stjärna (⭐) för lag</label>
-          <input type="text" id="starImp" value="Excalibur" placeholder="T.ex. Excalibur">
-        </div>
-        <div>
-          <label for="topLimit">Antal spelare (Topp)</label>
-          <input type="number" id="topLimit" min="5" max="200" value="20">
-        </div>
-      </div>
-
-      <div style="margin-top: 16px;">
-        <div class="imp-header">
-          <h2 class="section-title" style="margin:0;">3. Urval imperier</h2>
-          <button class="btn-mini" onclick="clearImps()">Rensa val</button>
-        </div>
-        <p style="font-size: 0.78rem; color: var(--muted); margin: 0 0 8px 0;">Lämna tomt för Topp 20. Kryssa i <b>( )</b> för parentes.</p>
-        <input type="text" id="impSearch" class="imp-search" placeholder="🔍 Sök imperium..." oninput="filterImpList()">
-        <div id="impList" class="imp-selector">Laddar imperier...</div>
-      </div>
-
-      <details class="paste-area">
-        <summary style="cursor:pointer; color: var(--muted); font-size: 0.85rem; font-weight: 600;">📋 Klistra in egen rådata lokalt</summary>
-        <p style="font-size: 0.78rem; color: var(--muted); margin: 6px 0;">Klistra in rader direkt från Rådata-fliken för att testa nya siffror i din webbläsare.</p>
-        <textarea id="rawPaste" rows="4" placeholder="Klistra in rader här..."></textarea>
-        <button class="btn-secondary" onclick="loadPastedData()">Läs in inklistrad data</button>
-      </details>
-    </aside>
-
-    <!-- HÖGER SPALT: FLIKAR & RESULTAT -->
-    <main>
-      <div class="tabs">
-        <button class="tab-btn active" onclick="setTab('imperier', this)">📊 Imperier</button>
-        <button class="tab-btn" onclick="setTab('spelare', this)">⚔️ Spelare</button>
-        <button class="tab-btn" onclick="setTab('effektivitet', this)">⚡ Stridsindex</button>
-        <button class="tab-btn" onclick="setTab('highlights', this)">🏆 Höjdpunkter</button>
-        <button class="tab-btn" onclick="setTab('intern', this)">🛡️ Intern Topplista</button>
-        <button class="tab-btn" onclick="setTab('duell', this)">🥊 Rivalduellen</button>
-        <button class="tab-btn" onclick="setTab('form', this)">🔥 Formkurvan</button>
-      </div>
-
-      <div class="output-box">
-        <div class="copy-bar">
-          <span id="statusMsg" class="status">Redo att kopiera</span>
-          <button class="btn-copy" onclick="copyResult()">📋 Kopiera till spelchatt</button>
-        </div>
-        <pre id="output">Laddar statistik...</pre>
-      </div>
-    </main>
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Dag</th>
+          <th>Spelare</th>
+          <th>Imperium</th>
+          <th>Points change</th>
+          <th>Strider</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
-</div>
 
   <script src="data.js"></script>
-  <script src="reports.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>
