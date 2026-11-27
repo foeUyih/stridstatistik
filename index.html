@@ -27,6 +27,10 @@
           <label for="stjarnLag">Stjärna (⭐) för lag:</label>
           <input type="text" id="stjarnLag" value="Excalibur" placeholder="T.ex. Excalibur">
         </div>
+        <div>
+          <label for="antalTopp">Antal i listor:</label>
+          <input type="number" id="antalTopp" min="5" max="200" value="20">
+        </div>
         <div style="align-self: end;">
           <button id="kopieraBtn" onclick="kopieraText()">📋 Kopiera till spelet</button>
         </div>
@@ -42,14 +46,22 @@
       </div>
     </div>
 
+    <!-- FLIKMENY -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="bytFlik('imperier', this)">📊 Imperier</button>
+      <button class="tab-btn" onclick="bytFlik('spelare', this)">⚔️ Spelare</button>
+      <button class="tab-btn" onclick="bytFlik('effektivitet', this)">⚡ Stridsindex</button>
+      <button class="tab-btn" onclick="bytFlik('hojdpunkter', this)">🏆 Höjdpunkter</button>
+    </div>
+
     <!-- FÄRDIG UTSKRIFT -->
-    <div class="panel">
-      <h3>Färdig utskrift (Imperier)</h3>
+    <div class="panel" style="margin-top: 10px;">
       <pre id="utskrift">Väntar på data...</pre>
     </div>
   </div>
 
   <script src="data.js"></script>
+  <script src="reports.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
