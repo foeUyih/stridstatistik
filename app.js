@@ -3,12 +3,10 @@ let aktivFlik = "imperier";
 function startaApp() {
   if (allaRader.length === 0) return;
 
-  // 1. Sätt startdag och slutdag
   const dagar = allaRader.map(r => r.dag);
   document.getElementById("franDag").value = Math.min(...dagar);
   document.getElementById("tillDag").value = Math.max(...dagar);
 
-  // 2. Bygg kryssrutorna för imperier
   const impSumma = {};
   allaRader.forEach(r => {
     impSumma[r.imperium] = (impSumma[r.imperium] || 0) + r.strider;
@@ -23,7 +21,6 @@ function startaApp() {
     </div>
   `).join("");
 
-  // 3. Lyssna på alla inmatningsfält
   ["franDag", "tillDag", "stjarnLag", "antalTopp"].forEach(id => {
     document.getElementById(id).addEventListener("input", uppdateraUtskrift);
   });
@@ -47,6 +44,7 @@ function uppdateraUtskrift() {
   const franDag = parseInt(document.getElementById("franDag").value, 10) || 1;
   const tillDag = parseInt(document.getElementById("tillDag").value, 10) || 1;
   const arEnskild = franDag === tillDag;
+  const stjarnLagRaw = document.getElementById("stjarnLag").value.trim();
 
   const info = {
     franDag,
@@ -54,7 +52,8 @@ function uppdateraUtskrift() {
     periodDagar: Math.max(1, tillDag - franDag + 1),
     arEnskild,
     rubrikPeriod: arEnskild ? `DAG ${franDag}` : `DAG ${franDag}–${tillDag}`,
-    stjarnLag: document.getElementById("stjarnLag").value.trim().toLowerCase(),
+    stjarnLagRaw,
+    stjarnLag: stjarnLagRaw.toLowerCase(),
     antalTopp: parseInt(document.getElementById("antalTopp").value, 10) || 20,
     valdaImp: Array.from(document.querySelectorAll(".val-imp:checked")).map(cb => cb.value),
     parentesImp: Array.from(document.querySelectorAll(".par-imp:checked")).map(cb => cb.value),
@@ -67,6 +66,9 @@ function uppdateraUtskrift() {
   else if (aktivFlik === "spelare") resultat = skapaSpelarRapport(info);
   else if (aktivFlik === "effektivitet") resultat = skapaEffektivitetsRapport(info);
   else if (aktivFlik === "hojdpunkter") resultat = skapaHojdpunkterRapport(info);
+  else if (aktivFlik === "intern") resultat = skapaInternRapport(info);
+  else if (aktivFlik === "duell") resultat = skapaDuellRapport(info);
+  else if (aktivFlik === "form") resultat = skapaFormRapport(info);
 
   document.getElementById("utskrift").textContent = resultat;
 }
