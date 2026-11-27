@@ -5,7 +5,7 @@ function formateraTal(tal) {
 function startaApp() {
   if (allaRader.length === 0) return;
 
-  // 1. Sätt startdag och slutdag
+  // 1. Sätt startdag och slutdag automatiskt
   const dagar = allaRader.map(r => r.dag);
   document.getElementById("franDag").value = Math.min(...dagar);
   document.getElementById("tillDag").value = Math.max(...dagar);
@@ -25,7 +25,7 @@ function startaApp() {
     </div>
   `).join("");
 
-  // 3. Lyssna på ändringar
+  // 3. Lyssna på ändringar i kontrollpanelen
   document.getElementById("franDag").addEventListener("input", uppdateraUtskrift);
   document.getElementById("tillDag").addEventListener("input", uppdateraUtskrift);
   document.getElementById("stjarnLag").addEventListener("input", uppdateraUtskrift);
@@ -41,6 +41,7 @@ function rensaVal() {
 function uppdateraUtskrift() {
   const franDag = parseInt(document.getElementById("franDag").value, 10) || 1;
   const tillDag = parseInt(document.getElementById("tillDag").value, 10) || 1;
+  const stjarnLag = document.getElementById("stjarnLag").value.trim().toLowerCase();
   const arEnskild = franDag === tillDag;
 
   // Läs av ikryssade imperier och parenteser
@@ -89,7 +90,8 @@ function uppdateraUtskrift() {
 
   text += visade.map(imp => {
     const visatNamn = parentesImp.includes(imp.namn) ? `(${imp.namn})` : imp.namn;
-    return `${imp.plac}. ${visatNamn}\n   ↳ ⚔️ ${formateraTal(imp.dagStrider)} (${imp.dagSpelare.size})  •  ⚔️ ${formateraTal(imp.totStrider)} (${imp.totSpelare.size})`;
+    const prefix = (stjarnLag && imp.namn.toLowerCase().includes(stjarnLag)) ? "⭐ " : "";
+    return `${prefix}${imp.plac}. ${visatNamn}\n   ↳ ⚔️ ${formateraTal(imp.dagStrider)} (${imp.dagSpelare.size})  •  ⚔️ ${formateraTal(imp.totStrider)} (${imp.totSpelare.size})`;
   }).join("\n\n");
 
   text += `\n\n────────────────────\nℹ️ Källa: https://foestats.com (Topp 200 spelare/dag)`;
