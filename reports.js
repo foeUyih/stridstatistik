@@ -16,7 +16,7 @@ function beraknaMedian(lista) {
 }
 
 function skapaImperieRapport(info) {
-  const { periodData, franDag, tillDag, arEnskild, rubrikPeriod, valdaImp, parentesImp, stjarnLag } = info;
+  const { periodData, franDag, tillDag, arEnskild, rubrikPeriod, valdaImp, parentesImp, antalTopp, stjarnLag } = info;
   const karta = {};
 
   periodData.forEach(rad => {
@@ -35,7 +35,7 @@ function skapaImperieRapport(info) {
     .sort((a, b) => b.totStrider - a.totStrider)
     .map((imp, idx) => ({ ...imp, plac: idx + 1 }));
 
-  const visade = valdaImp.length > 0 ? sorterade.filter(i => valdaImp.includes(i.namn)) : sorterade.slice(0, 20);
+  const visade = valdaImp.length > 0 ? sorterade.filter(i => valdaImp.includes(i.namn)) : sorterade.slice(0, antalTopp);
   const underRubrik = arEnskild ? `(Dag ${franDag} (spelare) • Enskild dag)` : `(Dag ${tillDag} (spelare) • Totalt Dag ${franDag}–${tillDag})`;
 
   let text = `══ 📊 STRIDSSTATISTIK – ${rubrikPeriod} ══\n${underRubrik}\n\n`;
@@ -114,9 +114,8 @@ function skapaEffektivitetsRapport(info) {
 }
 
 function skapaHojdpunkterRapport(info) {
-  const { periodData, dagData, franDag, tillDag, periodDagar, arEnskild, rubrikPeriod } = info;
+  const { periodData, dagData, franDag, tillDag, periodDagar, rubrikPeriod } = info;
 
-  // Imperier
   const impKarta = {};
   periodData.forEach(rad => {
     if (!impKarta[rad.imperium]) impKarta[rad.imperium] = { namn: rad.imperium, tot: 0, sp: new Set() };
@@ -134,11 +133,9 @@ function skapaHojdpunkterRapport(info) {
   const bredastImp = [...impLista].sort((a, b) => b.sp.size - a.sp.size).at(0) || { namn: "-", sp: new Set() };
   const snittImp = [...impLista].sort((a, b) => b.snitt - a.snitt).at(0) || { namn: "-", snitt: 0 };
 
-  // Bästa enskilda dag & servertotal
   const bastDagSp = [...dagData].sort((a, b) => b.strider - a.strider).at(0) || { spelare: "-", imperium: "-", strider: 0 };
   const serverTot = dagData.reduce((sum, r) => sum + r.strider, 0);
 
-  // Spelare period & index
   const spKarta = {};
   periodData.forEach(rad => {
     if (!spKarta[rad.spelare]) spKarta[rad.spelare] = { namn: rad.spelare, imperium: rad.imperium, tot: 0, dgr: 0, kvoter: [] };
@@ -154,7 +151,6 @@ function skapaHojdpunkterRapport(info) {
   const bastPerSp = [...spLista].sort((a, b) => b.tot - a.tot).at(0) || { namn: "-", imperium: "-", tot: 0, dgr: 0 };
   const bastEffSp = [...spLista].sort((a, b) => b.index - a.index).at(0) || { namn: "-", imperium: "-", index: 0, dgr: 0 };
 
-  // Dagens klättrare
   const forraDag = tillDag - 1;
   const forraData = allaRader.filter(r => r.dag === forraDag);
   let klattrareText = "Ingen föregående dag att jämföra med";
